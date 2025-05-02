@@ -12,8 +12,8 @@ const HomeScreen = () => {
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
       <Text style={{ fontSize: 40, fontWeight: "bold" }}>메인 화면</Text>
       <Button
-        title="상세 페이지 이동"
-        onPress={() => navigation.navigate("Details")}
+        title="할 일 리스트 이동"
+        onPress={() => navigation.navigate("TodoList")}
       />
       <Button
         title="할 일 작성"
@@ -67,60 +67,39 @@ const TodoWriteScreen = ({ navigation }) => {
   );
 };
 
-const DetailScreen = ({ navigation, route }) => {
-  const todo = route.params?.todo;
-
+const TodoSearchScreen = () => {
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-      <Text style={{ fontSize: 40, fontWeight: "bold" }}>상세보기 화면</Text>
-      <Text style={{ fontSize: 40, fontWeight: "bold" }}>
-        작성 내용 : {todo}
-      </Text>
-      <Button title="홈으로 이동" onPress={() => navigation.navigate("Home")} />
-      <Button
-        title="상세 페이지로 이동"
-        onPress={() => navigation.push("Details")}
-      />
+      <Text style={{ fontSize: 40, fontWeight: "bold" }}>할일 검색</Text>
+    </View>
+  );
+};
+
+const TodoListScreen = () => {
+  return (
+    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+      <Text style={{ fontSize: 40, fontWeight: "bold" }}>할일 리스트</Text>
+    </View>
+  );
+};
+
+const MyPageScreen = () => {
+  return (
+    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+      <Text style={{ fontSize: 40, fontWeight: "bold" }}>내 정보</Text>
     </View>
   );
 };
 
 const Stack = createNativeStackNavigator();
-const Tab = createBottomTabNavigator(); // tab을 사용하기 위해 설정
+const Tab = createBottomTabNavigator();
 
 export default function App() {
   return (
     <NavigationContainer>
-      {/* <Stack.Navigator
-        initialRouteName="Home"
-        screenOptions={{
-          headerStyle: {
-            backgroundColor: "#f4511e",
-          },
-          headerTintColor: "#fff",
-          headerTitleStyle: {
-            fontWeight: "bold",
-          },
-          headerRight: () => (
-            <Pressable onPress={() => alert("클릭됨!!")}>
-              <Text style={{ color: "#fff", fontWeight: "bold" }}>Menu</Text>
-            </Pressable>
-          ),
-        }}
-      >
-        <Stack.Screen
-          name="Home"
-          component={HomeScreen}
-          options={{
-            title: "메인 홈",
-          }}
-        />
-        <Stack.Screen name="TodoWrite" component={TodoWriteScreen} />
-        <Stack.Screen name="Details" component={DetailScreen} />
-      </Stack.Navigator> */}
-      <Tab.Navigator //Tab.Navigator로 사용
-        screenOptions={{
-          tabBarLabelStyle: { // 하단 style
+      <Tab.Navigator
+        screenOptions={({ route }) => ({ // route를 통해 해당 스크린에 값의 접근이 가능하다.
+          tabBarLabelStyle: {
             fontSize: 12,
             paddingBottom: 10,
             fontWeight: "bold",
@@ -130,39 +109,64 @@ export default function App() {
           },
           tabBarInactiveTintColor: "#0163d2",
           tabBarActiveTintColor: "black",
-          headerRight: () => (
-            <Pressable onPress={() => alert("클릭됨!!")}>
-              <Text style={{ color: "#fff", fontWeight: "bold" }}>Menu</Text>
-            </Pressable>
-          ),
-        }}
+          tabBarIcon: ({ color, size }) => {
+            let iconName;
+
+            if (route.name === "Home") { //route값에 따라 iconName에 값을 설정하고, 그대로 밑에 return을 통해 아이콘을 띄운다.
+              iconName = "home-variant";
+            } else if (route.name === "TodoSearch") {
+              iconName = "text-search";
+            } else if (route.name === "TodoWrite") {
+              iconName = "note-edit";
+            } else if (route.name === "TodoList") {
+              iconName = "view-list";
+            } else if (route.name === "MyPage") {
+              iconName = "account-circle";
+            }
+
+            return (
+              <MaterialCommunityIcons
+                name={iconName}
+                size={size}
+                color={color}
+              />
+            );
+          },
+        })}
       >
-        <Tab.Screen //하단에 누르면 home으로 
+        <Tab.Screen // Tab.Screen들 필요한거 설정정
           name="Home"
           component={HomeScreen}
           options={{
             title: "메인 홈",
-            tabBarIcon: ({ focused }) => ( //아이콘을 눌렀을때
-              <MaterialCommunityIcons // 이걸로 아이콘 설정
-                name="home-variant"
-                size={30}
-                color="black"
-              />
-            ),
           }}
         />
-        <Tab.Screen // 하단에 누르면 TodoWrite으로
+        <Tab.Screen
+          name="TodoSearch"
+          component={TodoSearchScreen}
+          options={{
+            title: "할일 검색",
+          }}
+        />
+        <Tab.Screen
           name="TodoWrite"
           component={TodoWriteScreen}
           options={{
             title: "할일 작성",
-            tabBarIcon: ({ focused }) => (
-              <MaterialCommunityIcons
-                name="square-edit-outline"
-                size={30}
-                color="black"
-              />
-            ),
+          }}
+        />
+        <Tab.Screen
+          name="TodoList"
+          component={TodoListScreen}
+          options={{
+            title: "할일 리스트",
+          }}
+        />
+        <Tab.Screen
+          name="MyPage"
+          component={MyPageScreen}
+          options={{
+            title: "내 정보",
           }}
         />
       </Tab.Navigator>
