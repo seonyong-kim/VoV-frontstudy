@@ -1,24 +1,16 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View, Button, TextInput, Pressable,} from "react-native";
+import {StyleSheet, Text, View, Button, TextInput, Pressable,} from "react-native";
 import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import React, { useState } from "react";
-import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { MaterialCommunityIcons, Ionicons } from "@expo/vector-icons";
 
 const HomeScreen = () => {
   const navigation = useNavigation();
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
       <Text style={{ fontSize: 40, fontWeight: "bold" }}>메인 화면</Text>
-      <Button
-        title="할 일 리스트 이동"
-        onPress={() => navigation.navigate("TodoList")}
-      />
-      <Button
-        title="할 일 작성"
-        onPress={() => navigation.navigate("TodoWrite")}
-      />
     </View>
   );
 };
@@ -95,80 +87,85 @@ const Stack = createNativeStackNavigator();
 const Tab = createBottomTabNavigator();
 
 export default function App() {
+  const tabConfig = [ // tabConfig는 설정 파일을 말한다.
+    {
+      name: "Home",
+      title: "메인 홈",
+      component: HomeScreen,
+      focusedIcon: "home-variant", // focusedIcon 포커싱이된 아이콘콘
+      unfocuedIcon: "home-variant-outline", // unfocuedIcon 포커싱이 안된 아이콘
+      iconComponent: MaterialCommunityIcons,
+    },
+    { // 각각 모두 진행
+      name: "TodoSearch",
+      title: "할일 검색",
+      component: TodoSearchScreen,
+      focusedIcon: "search-sharp",
+      unfocuedIcon: "search-outline",
+      iconComponent: Ionicons,
+    },
+    {
+      name: "TodoWrite",
+      title: "할일 작성",
+      component: TodoWriteScreen,
+      focusedIcon: "application-edit",
+      unfocuedIcon: "application-edit-outline",
+      iconComponent: MaterialCommunityIcons,
+    },
+    {
+      name: "TodoList",
+      title: "할일 리스트",
+      component: TodoListScreen,
+      focusedIcon: "list-sharp",
+      unfocuedIcon: "list-outline",
+      iconComponent: Ionicons,
+    },
+    {
+      name: "MyPage",
+      title: "내 정보",
+      component: MyPageScreen,
+      focusedIcon: "person-circle-sharp",
+      unfocuedIcon: "person-circle-outline",
+      iconComponent: Ionicons,
+    },
+  ];
+
+  const screenOptions = ({ route }) => ({ // screenOptions도 별도의 컴포넌트로 작성해 분리
+    tabBarIcon: ({ focused, color, size }) => {
+      const routeConfig = tabConfig.find( //config.name === route.name일때 tabConfig정보를 routeConfig에 넣어준다
+        (config) => config.name === route.name
+      );
+
+      const iconName = focused //focused여부에 따라 다른거 적용
+        ? routeConfig.focusedIcon
+        : routeConfig.unfocuedIcon;
+      const IconComponent = routeConfig.iconComponent;
+
+      return <IconComponent name={iconName} size={size} color={color} />;
+    },
+    tabBarLabelStyle: {
+      fontSize: 12,
+      paddingBottom: 10,
+      fontWeight: "bold",
+    },
+    tabBarStyle: {
+      height: 60,
+    },
+    tabBarInactiveTintColor: "#0163d2",
+    tabBarActiveTintColor: "black",
+  });
+
   return (
     <NavigationContainer>
-      <Tab.Navigator
-        screenOptions={({ route }) => ({ // route를 통해 해당 스크린에 값의 접근이 가능하다.
-          tabBarLabelStyle: {
-            fontSize: 12,
-            paddingBottom: 10,
-            fontWeight: "bold",
-          },
-          tabBarStyle: {
-            height: 60,
-          },
-          tabBarInactiveTintColor: "#0163d2",
-          tabBarActiveTintColor: "black",
-          tabBarIcon: ({ color, size }) => {
-            let iconName;
-
-            if (route.name === "Home") { //route값에 따라 iconName에 값을 설정하고, 그대로 밑에 return을 통해 아이콘을 띄운다.
-              iconName = "home-variant";
-            } else if (route.name === "TodoSearch") {
-              iconName = "text-search";
-            } else if (route.name === "TodoWrite") {
-              iconName = "note-edit";
-            } else if (route.name === "TodoList") {
-              iconName = "view-list";
-            } else if (route.name === "MyPage") {
-              iconName = "account-circle";
-            }
-
-            return (
-              <MaterialCommunityIcons
-                name={iconName}
-                size={size}
-                color={color}
-              />
-            );
-          },
-        })}
-      >
-        <Tab.Screen // Tab.Screen들 필요한거 설정정
-          name="Home"
-          component={HomeScreen}
-          options={{
-            title: "메인 홈",
-          }}
-        />
-        <Tab.Screen
-          name="TodoSearch"
-          component={TodoSearchScreen}
-          options={{
-            title: "할일 검색",
-          }}
-        />
-        <Tab.Screen
-          name="TodoWrite"
-          component={TodoWriteScreen}
-          options={{
-            title: "할일 작성",
-          }}
-        />
-        <Tab.Screen
-          name="TodoList"
-          component={TodoListScreen}
-          options={{
-            title: "할일 리스트",
-          }}
-        />
-        <Tab.Screen
-          name="MyPage"
-          component={MyPageScreen}
-          options={{
-            title: "내 정보",
-          }}
-        />
+      <Tab.Navigator screenOptions={screenOptions}>
+        {tabConfig.map((routeConfig) => (
+          <Tab.Screen
+            key={routeConfig.name}
+            name={routeConfig.name}
+            component={routeConfig.component}
+            options={{ title: routeConfig.title }}
+          />
+        ))}
       </Tab.Navigator>
     </NavigationContainer>
   );
