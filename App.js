@@ -1,12 +1,13 @@
 import { StatusBar } from "expo-status-bar";
-import {StyleSheet, Text, View, Button, TextInput, Pressable,} from "react-native";
+import { StyleSheet, Text, View, Button, TextInput, Pressable,} from "react-native";
 import { NavigationContainer, useNavigation } from "@react-navigation/native";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import React, { useState } from "react";
+import { MaterialCommunityIcons } from "@expo/vector-icons";
 
 const HomeScreen = () => {
   const navigation = useNavigation();
-  // 복잡한 구조인 경우에만 필요하다.
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
       <Text style={{ fontSize: 40, fontWeight: "bold" }}>메인 화면</Text>
@@ -67,7 +68,7 @@ const TodoWriteScreen = ({ navigation }) => {
 };
 
 const DetailScreen = ({ navigation, route }) => {
-  const todo = route.params?.todo; // route.params에 데이터가 없는데 반영하려고 해서 error발생 ?.todo를 한다.
+  const todo = route.params?.todo;
 
   return (
     <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
@@ -85,13 +86,14 @@ const DetailScreen = ({ navigation, route }) => {
 };
 
 const Stack = createNativeStackNavigator();
+const Tab = createBottomTabNavigator(); // tab을 사용하기 위해 설정
 
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator
-        initialRouteName="Home" //옵션을 부여할 수 있다.
-        screenOptions={{ // 이 옵션을 통해 상단에 공통요소가 들어갈수 있다.
+      {/* <Stack.Navigator
+        initialRouteName="Home"
+        screenOptions={{
           headerStyle: {
             backgroundColor: "#f4511e",
           },
@@ -99,7 +101,7 @@ export default function App() {
           headerTitleStyle: {
             fontWeight: "bold",
           },
-          headerRight: () => ( // 특정 아이콘을 우축에 반영한다. 이역시 공통으로 반영한다.
+          headerRight: () => (
             <Pressable onPress={() => alert("클릭됨!!")}>
               <Text style={{ color: "#fff", fontWeight: "bold" }}>Menu</Text>
             </Pressable>
@@ -115,7 +117,55 @@ export default function App() {
         />
         <Stack.Screen name="TodoWrite" component={TodoWriteScreen} />
         <Stack.Screen name="Details" component={DetailScreen} />
-      </Stack.Navigator>
+      </Stack.Navigator> */}
+      <Tab.Navigator //Tab.Navigator로 사용
+        screenOptions={{
+          tabBarLabelStyle: { // 하단 style
+            fontSize: 12,
+            paddingBottom: 10,
+            fontWeight: "bold",
+          },
+          tabBarStyle: {
+            height: 60,
+          },
+          tabBarInactiveTintColor: "#0163d2",
+          tabBarActiveTintColor: "black",
+          headerRight: () => (
+            <Pressable onPress={() => alert("클릭됨!!")}>
+              <Text style={{ color: "#fff", fontWeight: "bold" }}>Menu</Text>
+            </Pressable>
+          ),
+        }}
+      >
+        <Tab.Screen //하단에 누르면 home으로 
+          name="Home"
+          component={HomeScreen}
+          options={{
+            title: "메인 홈",
+            tabBarIcon: ({ focused }) => ( //아이콘을 눌렀을때
+              <MaterialCommunityIcons // 이걸로 아이콘 설정
+                name="home-variant"
+                size={30}
+                color="black"
+              />
+            ),
+          }}
+        />
+        <Tab.Screen // 하단에 누르면 TodoWrite으로
+          name="TodoWrite"
+          component={TodoWriteScreen}
+          options={{
+            title: "할일 작성",
+            tabBarIcon: ({ focused }) => (
+              <MaterialCommunityIcons
+                name="square-edit-outline"
+                size={30}
+                color="black"
+              />
+            ),
+          }}
+        />
+      </Tab.Navigator>
     </NavigationContainer>
   );
 }
