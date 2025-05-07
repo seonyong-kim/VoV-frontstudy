@@ -113,8 +113,97 @@ const styles = StyleSheet.create({
   },
 });
 ```
-### 코드
+## 코드
+### HomeScreen
+```javascript
+const HomeScreen = () => {
+  (생략)
+    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+      (생략)
+      <Button
+        title="할 일 작성"
+        onPress={() => navigation.navigate("TodoWrite")}
+      />
+  (생략)
+};
+```
+- \<View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+  
+- 할 일 작성 버튼을 추가 작성 동작이 궁금하면 3장을 참고
+
+### TodoWriteScreen
+``` javascript
+const TodoWriteScreen = ({ navigation }) => {
+  const [todo, setTodo] = useState("");
+  return (
+    <>
+      <TextInput
+        multiline
+        onChangeText={setTodo}
+        value={todo}
+        placeholder="할 일을 작성해주세요."
+        style={{
+          flex: 0.3,
+          padding: 10,
+          backgroundColor: "#fff",
+          borderRadius: 10,
+          borderWidth: 2,
+          margin: 10,
+        }}
+      />
+      <Pressable
+        onPress={() => {
+          navigation.navigate("Details", { todo });
+          setTodo("");
+        }}
+      >
+        <Text
+          style={{
+            padding: 10,
+            backgroundColor: "#fff",
+            borderRadius: 10,
+            borderWidth: 2,
+            width: "30%",
+            textAlign: "center",
+            fontWeight: "bold",
+            margin: 10,
+          }}
+        >
+          작성
+        </Text>
+      </Pressable>
+    </>
+  );
+};
+```
+- const [todo, setTodo] = useState("")<br>
+  todo: 사용자가 작성한 텍스트를 저장할 변수. setTodo: 텍스트를 변경할 때 사용되는 함수
+ 
+
+### DetailScreen
+```javascript
+const DetailScreen = ({ navigation, route }) => {
+  const { todo } = route.params;
+
+  return (
+    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+      <Text style={{ fontSize: 40, fontWeight: "bold" }}>상세보기 화면</Text>
+      <Text style={{ fontSize: 40, fontWeight: "bold" }}>
+        작성 내용 : {todo}
+      </Text>
+      <Button title="홈으로 이동" onPress={() => navigation.navigate("Home")} />
+      <Button
+        title="상세 페이지로 이동"
+        onPress={() => navigation.push("Details")}
+      />
+    </View>
+  );
+};
+
+```
+
 - TextInput
+
 TextInput은 text를 적을 수 있게 만들어 준다
 - 매개변수 전달
 ```javascript
