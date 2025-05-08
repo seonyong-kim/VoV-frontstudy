@@ -18,8 +18,10 @@ const HomeScreen = ({ navigation }) => {
     </View>
   );
 };
+```
 
 ## MyPageScreen.js
+```javascript
 export default HomeScreen;
 import { Text, View } from "react-native";
 import React from "react";
@@ -31,8 +33,10 @@ const MyPageScreen = () => {
     </View>
   );
 };
+```
 
 ## TodoListScreen.js
+```javascript
 export default MyPageScreen;
 import { Text, View } from "react-native";
 import React from "react";
