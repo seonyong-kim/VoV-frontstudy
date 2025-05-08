@@ -64,8 +64,10 @@ const TodoSearchScreen = () => {
     </View>
   );
 };
+```
 
 ## TodoWriteScreen.js
+```javascript
 export default TodoSearchScreen;
 import { Text, View, TextInput, Pressable } from "react-native";
 import React, { useState } from "react";
